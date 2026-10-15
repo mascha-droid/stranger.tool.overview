@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stranger Tool Overview</title>
+  <style>
+    * {
+      cursor: none !important;
+    }
+    body {
+      background-color: blue;
+      margin: 0;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      position: relative;
+    }
+    .tool-link {
+      position: absolute;
+      display: inline-block;
+      text-decoration: none;
+      user-select: none;
+    }
+    @keyframes spinFast {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .random-png {
+      width: 100px;
+      height: auto;
+      display: block;
+      transform-origin: center center;
+    }
+    .tool-link:hover .random-png {
+      animation: spinFast 0.4s linear infinite;
+    }
+    #custom-cursor {
+      position: fixed;
+      width: 450px;
+      height: auto;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-75%, -5%);
+    }
+    #tooltip {
+      position: fixed;
+      display: none;
+      pointer-events: none;
+      z-index: 999999;
+      background: black;
+      padding: 16px;
+      border-radius: 8px;
+      width: 320px;
+      box-shadow: none;
+      
+      /* Anforderungen: weiß, helvetica, blocksatz, alles eine schriftgröße und regular */
+      color: #ffffff;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      font-weight: normal;
+      text-align: left;
+      line-height: 1.3;
+      white-space: pre-line;
+    }
+    #info-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 100px;
+      height: 100px;
+      z-index: 9990;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      cursor: none !important;
+    }
+    .info-char {
+      color: #ffffff;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 100px;
+      font-weight: normal;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      transform-origin: center center;
+    }
+    #info-btn:hover .info-char {
+      animation: spinFast 0.4s linear infinite;
+    }
+  </style>
+</head>
+<body>
+
+ 
+  <img id="custom-cursor" src="assets/1x/Element 1-8.png" alt="Custom Cursor">
+
+
+  <div id="tooltip"></div>
+
+  <div id="info-btn" aria-label="Informationen zum Kurs">
+    <span class="info-char">?</span>
+  </div>
+
+  
+  <script>
+    const toolsData = [
+      {
+        name: "ABSTRACTINATOR",
+        author: "Paulina Grube",
+        url: "https://brown-cattle-459695.hostingersite.com/",
+        desc: "ABSTRACTINATOR ist ein webbasiertes Gestaltungstool, das die eigene Umgebung zur Inspirationsquelle macht. Mit der Handykamera lassen sich Formen, Farben, Texturen und Objekte direkt erfassen, freistellen und zu digitalen Collagen zusammenstellen. Der Fokus liegt dabei auf dem Sammeln und Festhalten visueller Eindrücke eines bestimmten Ortes. Aus diesen entstehen erste Ideen, Moodboards oder auch fertige Kompositionen, je nachdem, wie weit der Gestaltungsprozess gehen soll. So wird die Umgebung selbst zum kreativen Werkzeug und bietet neue Impulse für Design, Typografie und visuelle Konzepte."
+      },
+      {
+        name: "cliptrace",
+        author: "Lea Ickinger",
+        url: "https://harmonious-licorice-5d9195.netlify.app",
+        desc: "Eine Webanwendung, bei der mithilfe von Gestenerkennung die eigene Umgebung zum Gestaltungstool wird. Anstatt mit Farben bestimmt man hier mit Bildausschnitten, wie der Pinsel malt. Bei diesem Tool ist der Finger nicht nur der Pinsel, sondern auch das Steuerelement für Deckkraft und Pinselstärke. Auch das Gesicht spielt eine kleine Rolle: Mit der Neigung des Kopfes rotiert der Pinselstrich passend dazu, außerdem wird Blinzeln zu einem kleinen Gestaltungselement. Das Ergebnis ist ein Werk, das aus der Interaktion zwischen Körper, Umgebung und dem Tool entsteht."
+      },
+      {
+        name: "Die verborgene Seele",
+        author: "Julian Rottstegge",
+        url: "#",
+        desc: "Hinter jeder Fassade liegt eine verborgene akustische Struktur. Dieses Tool extrahiert die Fragmente und legt die wahre Seele einer Website frei. Elemente & Inhalt bestimmen die Ausgabe des Klangs. Der User kann in Zusammenarbeit mit der Website einen Soundloop kreieren, der aus der Seele der Website stammt."
+      },
+      {
+        name: "Digitaler RISO-Drucker",
+        author: "Noa Marie Gunter",
+        url: "https://noamarie04.github.io/Digitaler-Riso-2/",
+        desc: "Dieses Stranger-Tools-Projekt setzt den launischen und schwer bedienbaren RISO-Drucker in einer Website um, welche einem nach dem Designen direkt die Farb-Master bereitstellt. Anstatt nach jedem Ändern (am physischen Drucker) 20 Seiten zu drucken, um den Unterschied zu sehen, kann man auf der Website alles schon vorher einstellen: Rasterung, Form, Farbe und Versetzung in wenigen Klicks. So kann man direkt ohne Zwischenschritte das finale Projekt drucken. RISO drucken leicht gemacht."
+      },
+      {
+        name: "entropy",
+        author: "Marie Nordhoff",
+        url: "https://maxfn9.github.io/entropy-tool/",
+        desc: "Kann ein Bild sich selbst beschreiben? Entropy ist ein experimentelles Zeitwerkzeug, das jede Bewegung vor der Kamera in eine physische Spur im eigenen Code übersetzt. Ein digitaler Seismograph, der die Anwesenheit der Betrachterin ununterbrochen protokolliert, während sich das eigene Bild unweigerlich in seine Einzelteile auflöst. Dabei schreibt das System ein Bild der Zerstörung, welches physischen Verfallserscheinungen „sterbender“ Displays nachempfunden ist: Ein violettes Rauschen frisst sich durch das Raster, gesammelte Kamera-Artefakte stempeln sich ein. Tritt Stillstand ein, stoppt der Schreibprozess, bis neue Bewegung den Verfall reaktiviert. Das digitale Zeugnis von Verletzlichkeit überschreibt sich: Sobald der Speicher voll ist, archiviert das System den Moment maximaler Zerstörung automatisch, heilt sich von selbst, und der Kreislauf beginnt als unbeschriebenes Blatt von vorn."
+      },
+      {
+        name: "I want to be an artist and a producer!",
+        author: "Lara Schwiegelshon",
+        url: "#",
+        desc: "Dieses Interface ist ein unbeschriebenes Blatt. Wer tippt, zeichnet, tastet, sucht. Es gibt kein Handbuch, nur die Neugier. Welche Logik steckt wohl hinter dieser Taste? Das Programm ist ein Fremder, den man erst durch Ausprobieren kennenlernt. Ein minimalistisches Experiment, bei dem das Werkzeug nicht nur starr ausführt, sondern zum unberechenbaren Partner im Gestaltungsprozess wird. Was lässt sich gemeinsam mit diesem Fremden erschaffen?"
+      },
+      {
+        name: "Internet Designer",
+        author: "Niklas Mehl",
+        url: "https://niklasmehl.github.io/youplusinternet/",
+        desc: "Internet Designer ist ein Chrome-Browser-Plugin zum Gestalten von experimentellen Publikationen. Es lässt mithilfe eines Popups alle Texte und Bilder auf jeder beliebigen Seite durch eigene ersetzen – dabei gibt es einen Loop-Modus, wo die Inhalte in das Popup geladen werden und sich immer wieder wiederholen, sowie einen individuellen Modus, mit dem man Inhalte auf der Seite direkt bearbeiten kann. Wenn man die Webseiten dann direkt über das Browser-Print-Interface druckt, erhält man überraschende und inspirierende Layouts und kann eigene Publikationen gestalten."
+      },
+      {
+        name: "midi_me",
+        author: "Quentin Haller",
+        url: "https://quimbim77.github.io/midi_me/",
+        desc: "midi_me ist ein dreiteiliges Gestaltungstool, das über einen MIDI-Controller gesteuert werden kann. Es teilt sich auf in midi_me_a_glitch, welches zur Bearbeitung von Videos genutzt werden kann, um diese mit Glitches und Datamoshing zu versehen. Der zweite Teil ist midi_me_a_letter: Hier kann man typografische Poster mit drei individuellen, vorab getippten Zeilen erstellen – über die Regler werden die Buchstaben anschließend auf dem Format bewegt. Der letzte Teil, midi_me_a_sketch, basiert auf dem Spielzeug Etch A Sketch und versteht sich als dessen digitale Übersetzung und Erweiterung."
+      },
+      {
+        name: "Origami Thing",
+        author: "Lena Rosenkranz",
+        url: "https://lenarxo.github.io/origami-thing/",
+        desc: "Origami Thing ist ein Tool, mit dem man sein eigenes Origamipapier gestalten kann. Es ist inspiriert von den traditionellen japanischen Mustern, die häufig auf klassischem Origamipapier zu finden sind. Nachdem man in die Canvas gemalt hat, kann man sein Muster skalieren, drucken und danach mit einer zufälligen Anleitung, die man beim Speichern bekommt, zu einem Origami falten."
+      },
+      {
+        name: "perornament",
+        author: "Emily Bruenjes",
+        url: "https://perornament.github.io/260628-per-ornament-/",
+        desc: "„perornament“ ist ein experimentelles Projekt, welches Designentscheidungen als sozialen und patriarchalen Code hinterfragt. Es versucht sich der Logik standardisierter Textgestaltung zu widersetzen und bietet Anstöße, die eigene Perspektive zu hinterfragen. Ausgehend von der Haltung, Ornamente nicht nur als bloße Dekoration abzutun, stellt es das Ornament als Gestalter in den Vordergrund: zum Aufbrechen steriler Plattformen und Öffnen neuer Gestaltungsgründe."
+      },
+      {
+        name: "Pixel Sortierer",
+        author: "Jona Lafrentz",
+        url: "https://lafrentz.de/jona/pixelsortierer/pixelSortierer20.html",
+        desc: "Ein Tool, das die Pixel in einem hochgeladenen Bild sortiert – jedoch nie das ganze Bild, sondern unterschiedlich große rechteckige Ausschnitte, die vom Benutzer frei gewählt werden können. Das Sortieren geschieht nach verschiedenen Farbmethoden, die auch nacheinander gemischt werden können, um interessante Effekte zu erzeugen."
+      },
+      {
+        name: "Printshop",
+        author: "Mascha Rein",
+        url: "https://mascha-droid.github.io/printshop/",
+        desc: "Dieses Tool dient zur Gestaltung eines Bons, der direkt gedruckt werden kann. Mit den Pfeiltasten auf der Tastatur kann der User einen Punkt auf dem Bildschirm bewegen, der dort von Station zu Station laufen kann. An den verschiedenen Stationen können dann verschiedene Elemente platziert werden. Dort werden durch X- und Y-Werte die Positionen bestimmt und durch Pixelwerte die Größe des zu platzierenden Elements. Durch die langen Wege, die der User gehen muss, und die „umständliche“ Bedienung fühlt sich das Tool fast analog an – auch das fertig gestaltete Produkt wirkt oft wie durch Zufall entstanden. Die Gestaltung ist mit Schrift- und Farbreduzierung stark an einem Kassenzettel inspiriert."
+      },
+      {
+        name: "ScanLineAction",
+        author: "Pino Roloff",
+        url: "https://1pino.github.io/scanlineaction/index.html",
+        desc: "This tool explores the analogue technique of photo scanning. It tries to translate this technique into a digital environment and explores the new possibilities that present themselves through the new media. You can upload videos, through which a time component gets incorporated into the tool, or you can scan yourself through the webcam. You can also stop the scanline, upload a new photo, set the speed and size of the scanline, and experiment with different mix blend modes."
+      },
+      {
+        name: "Stochastic Typewriter",
+        author: "Linh Dang",
+        url: "https://llinhd.github.io/stochastic-typewriter/",
+        desc: "Inspiriert von dem Werk „Stochastic Poetics“ von Johanna Drucker ist die Stochastic Typewriter ein Tool, das Texte und Gedichte durch Umgebungsgeräusche verzerrt. Das Tool lädt zudem dazu ein, kollaborativ anhand von 5 verschiedenen Schreib- und Poesiekonzepten zu schreiben. Nutzer:innen können die Typografie des Textes ausschließlich über den Live-Sound ihres aktuellen Standorts gestalten. Das Konzept dahinter ist zu zeigen, wie Poesie in einer von Ablenkungen und Lärm gesättigten Welt überlebt, sich verändert und mutiert."
+      },
+      {
+        name: "Tools für Gestalter:innen",
+        author: "Leo Huelsmann",
+        url: "https://leo-huelsmann.github.io/tfg/index.html",
+        desc: "Eine Sammlung von kleinen Tools für Gestalter:innen. Die Benutzerfreundlichkeit, die minimalistische Ästhetik und die Funktionen selbst sollen im Vordergrund stehen. Die Ideen für die Tools kommen von Studenten und Professoren aus der gestalterischen Szene."
+      },
+      {
+        name: "Typometric",
+        author: "Christopher Thomas",
+        url: "#",
+        desc: "Typometric ist ein Werkzeug zum Gestalten von Texten mit reiner Mathematik. Dafür besteht es aus zwei Teilen: einem Markdown-Texteditor und einem Fenster zum Bearbeiten der Schrifteinstellungen. Im Gegensatz zu klassischer Designsoftware kann hier für jede Einstellung (z. B. Schriftgröße, Laufweite, Schriftstärke) eine Formel angegeben werden. So lädt das Programm Gestalter:innen dazu ein, mit Mathematik als Gestaltungswerkzeug zu spielen. Dabei können schon durch einfache Formeln komplexe Layouts entstehen, die so in keiner anderen Software möglich sind."
+      },
+      {
+        name: "Web Echo",
+        author: "Niklas Mehl",
+        url: "#",
+        desc: "Web Echo ist ebenfalls ein Chrome-Browser-Plugin, mit dem man direkt im Browser Notizen und Doodles anfertigen kann. Es generiert zufällig Textfelder auf besuchten Webseiten, die den geschriebenen Text im local storage speichern und dann an anderen Orten wieder zufällig anzeigen. Dasselbe Prinzip wird auch über manchen Bildern angewendet – über ihnen wird ein p5.js-Canvas generiert, auf dem man doodeln kann; die Zeichnungen werden gespeichert und später wieder zufällig vorgeschlagen. Man bekommt somit beim Surfen durch das Internet nach einiger Zeit nicht nur fremde Inhalte angezeigt, sondern auch immer wieder etwas, das man selbst gemacht hat."
+      },
+      {
+        name: "weird growth",
+        author: "Morten Kölpin",
+        url: "https://koelpimo.github.io/Weird-Growth/",
+        desc: "Weird growth ist ein interaktives Gestaltungstool für organische Formen. Aus Text, freien Zeichnungen oder in definierten Grenzen entsteht über den Differential-Growth-Algorithmus eine sich ausdehnende Struktur: Punkte stoßen sich ab, Kanten teilen sich, wodurch ein lebendig erscheinendes Liniennetz wächst. Parameter können das Verhalten steuern."
+      },
+      {
+        name: "wirr",
+        author: "Hanna-Sophie Bresgott",
+        url: "https://random.interaction.world/ss26/stranger-tools/wirr/",
+        desc: "„wirr“ ist ein experimentelles Gestaltungstool, das Design auf das Wesentliche reduziert und dazu einlädt, spielerisch mit Ebenen zu experimentieren. Durch bewusste Reduktion bietet das Interface Raum für intuitive Kompositionen. Nutzer:innen steuern vier Ebenen individuell, kombinieren diese und können sie sowohl gemeinsam als auch separat exportieren. Ziel ist es, die abstrakte Arbeit mit Ebenen greifbar zu machen: Die Trennung ermöglicht es, digitale Entwürfe in die analoge Welt zu überführen und dort neu zusammenzuführen. So schärft „wirr“ das Bewusstsein für die Wirkung einzelner Gestaltungselemente und deren Zusammenspiel im komplexen Designprozess."
+      }
+    ];
+
+    const toolColors = [
+      '#E63946', // Rot
+      '#F4A261', // Orange
+      '#E9C46A', // Gelb
+      '#2A9D8F', // Petrol
+      '#8338EC', // Violett
+      '#FB5607', // Orange-Rot
+      '#3A86FF', // Hellblau (nicht Hintergrund-Blau)
+      '#FF006E', // Pink
+      '#06D6A0', // Mintgrün
+      '#FFBE0B', // Goldgelb
+      '#CB4154', // Weinrot
+      '#7209B7', // Dunkelviolett
+      '#4CC9F0', // Eisblau
+      '#F72585', // Magenta
+      '#B5179E', // Lila
+      '#43AA8B', // Grün
+      '#FF4D6D', // Koralle
+      '#90E0EF', // Hellcyan (dunkel genug für weißen Text)
+    ];
+
+    const imageSrc = 'assets/934.png';
+    const imgWidth = 100;
+    const imgHeight = 100;
+    const padding = 16;
+
+    // Erzeugt ein SVG-Data-URL für ein vollflächig in der Tool-Farbe ausgefülltes Nonagon
+    function getFilledNonagonSvg(color) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 596 520" width="596" height="520"><polygon points="281.00,519.00 114.52,458.41 25.93,304.97 56.70,130.50 192.42,16.62 369.58,16.62 505.30,130.50 536.07,304.97 447.48,458.41" fill="${color}" stroke="${color}" stroke-width="8"/></svg>`;
+      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    }
+
+    // Altes localStorage ggf. bereinigen
+    try {
+      localStorage.removeItem('stranger_tools_clicked');
+    } catch (e) {}
+
+    // Geklickte Tools nur für die aktuelle Session (wird beim Reload zurückgesetzt)
+    const visitedTools = new Set();
+
+    function markToolVisited(toolName) {
+      visitedTools.add(toolName);
+    }
+
+    // Für Debugging / Reset in Konsole verfügbar
+    window.resetVisitedTools = () => {
+      visitedTools.clear();
+      generateNonOverlappingTools();
+    };
+
+    const customCursor = document.getElementById('custom-cursor');
+    const tooltip = document.getElementById('tooltip');
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    // Custom Cursor & Tooltip Positionierung per Mousemove
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      customCursor.style.left = mouseX + 'px';
+      customCursor.style.top = mouseY + 'px';
+
+      if (tooltip.style.display === 'block') {
+        // Tooltip neben dem Mauszeiger ausrichten
+        let posX = mouseX + 20;
+        let posY = mouseY + 20;
+
+        // Bildschirmschranken berücksichtigen
+        if (posX + 340 > window.innerWidth) {
+          posX = mouseX - 340;
+        }
+        if (posY + 250 > window.innerHeight) {
+          posY = mouseY - 250;
+        }
+
+        tooltip.style.left = posX + 'px';
+        tooltip.style.top = posY + 'px';
+      }
+    });
+
+    function generateNonOverlappingTools() {
+      // Bestehende Links/Bilder entfernen (außer Cursor & Tooltip)
+      document.querySelectorAll('.tool-link').forEach(el => el.remove());
+
+      const placedBoxes = [];
+      const maxW = Math.max(10, window.innerWidth - imgWidth);
+      const maxH = Math.max(10, window.innerHeight - imgHeight);
+
+      toolsData.forEach((tool, index) => {
+        const toolColor = toolColors[index % toolColors.length];
+        let x = 0;
+        let y = 0;
+        let overlaps = true;
+        let attempts = 0;
+
+        while (overlaps && attempts < 1000) {
+          attempts++;
+          x = Math.floor(Math.random() * maxW);
+          y = Math.floor(Math.random() * maxH);
+
+          // Ecke unten rechts für das große Fragezeichen freihalten
+          const hitsQuestionMark = (x + imgWidth + padding > window.innerWidth - 140) && (y + imgHeight + padding > window.innerHeight - 140);
+
+          overlaps = hitsQuestionMark || placedBoxes.some(box => {
+            return !(
+              x + imgWidth + padding <= box.x ||
+              box.x + imgWidth + padding <= x ||
+              y + imgHeight + padding <= box.y ||
+              box.y + imgHeight + padding <= y
+            );
+          });
+        }
+
+        placedBoxes.push({ x, y });
+
+        // Link-Container
+        const a = document.createElement('a');
+        a.href = tool.url;
+        if (tool.url !== '#') {
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+        }
+        a.className = 'tool-link';
+        a.style.left = x + 'px';
+        a.style.top = y + 'px';
+
+        // Nonagon Bild (vollflächig in Tool-Farbe falls bereits geklickt, sonst weißer Umriss)
+        const img = document.createElement('img');
+        const isVisited = visitedTools.has(tool.name);
+        img.src = isVisited ? getFilledNonagonSvg(toolColor) : imageSrc;
+        img.alt = tool.name;
+        img.className = 'random-png';
+
+        a.appendChild(img);
+
+        // Klick-Handler: Markiert das Tool als besucht und wechselt sofort auf das farbig gefüllte Nonagon
+        const handleToolClick = (e) => {
+          if (tool.url === '#' && e.button !== 1) {
+            e.preventDefault();
+          }
+          markToolVisited(tool.name);
+          img.src = getFilledNonagonSvg(toolColor);
+        };
+
+        a.addEventListener('click', handleToolClick);
+        a.addEventListener('auxclick', handleToolClick);
+
+        // Hover Event-Listeners für Tooltip
+        a.addEventListener('mouseenter', (e) => {
+          tooltip.innerText = `${tool.name}\n\n${tool.author}\n\n${tool.desc}`;
+          tooltip.style.background = toolColor;
+          tooltip.style.display = 'block';
+        });
+
+        a.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+        });
+
+        document.body.appendChild(a);
+      });
+    }
+
+    // Info-Button Hover Interaktion (wie bei den Tools)
+    const infoBtn = document.getElementById('info-btn');
+    const infoText = `Dies ist die Overview-Seite des Kurses Stranger Tools aus dem Sommersemester 2026, betreut von Professor Sebastian Schmieg an der HAW Hamburg. In diesem Kurs wurden verschiedenste Tools konzipiert und finalisiert.\n\nDie Overview-Seite wurde gestaltet von Mascha Rein.`;
+
+    infoBtn.addEventListener('mouseenter', () => {
+      tooltip.innerText = infoText;
+      tooltip.style.background = '#4a4a4a';
+      tooltip.style.display = 'block';
+    });
+
+    infoBtn.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+
+    window.addEventListener('load', generateNonOverlappingTools);
+    window.addEventListener('resize', generateNonOverlappingTools);
+    generateNonOverlappingTools();
+  </script>
+
+</body>
+</html>

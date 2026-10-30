@@ -101,7 +101,7 @@ stranger.tool.overview/
 | 13 | ScanLineAction | Pino Roloff | https://1pino.github.io/scanlineaction/index.html |
 | 14 | Stochastic Typewriter | Linh Dang | https://llinhd.github.io/stochastic-typewriter/ |
 | 15 | Tools für Gestalter:innen | Leo Huelsmann | https://leo-huelsmann.github.io/tfg/index.html |
-| 16 | Typometric | Christopher Thomas | (noch offline) |
+| 16 | Typometric | Christopher Thomas | https://thomasitos.github.io/Typometric/ |
 | 17 | Web Echo | Niklas Mehl | (noch offline) |
 | 18 | weird growth | Morten Kölpin | https://koelpimo.github.io/Weird-Growth/ |
 | 19 | wirr | Hanna-Sophie Bresgott | https://random.interaction.world/ss26/stranger-tools/wirr/ |
